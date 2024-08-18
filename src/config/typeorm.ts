@@ -1,8 +1,10 @@
 import { registerAs } from '@nestjs/config';
 import { config as dotenvConfig } from 'dotenv';
 import { DataSource, DataSourceOptions } from 'typeorm';
-const isProduction = process.env.NODE_ENV;
+
 dotenvConfig({ path: '.env' });
+
+const isProduction = process.env.NODE_ENV;
 
 const config = {
   type: 'postgres',
@@ -15,12 +17,13 @@ const config = {
   migrations: ['dist/migrations/*{.ts,.js}'],
   seeds: ['dist/seeders/*{.ts,.js}'],
   autoLoadEntities: true,
-  synchronize: false,
+  synchronize: true,
   retryAttempts: 3,
   ssl:
     isProduction === 'production'
       ? {
           rejectUnauthorized: false,
+          ca: process.env.DATABASE_SSL_CERT,
         }
       : null,
 };
